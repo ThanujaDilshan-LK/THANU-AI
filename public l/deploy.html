@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THANU AI — Deploy Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A18;--panel:#13132A;--panel-2:#191938;
+    --violet:#7C6CF0;--cyan:#2FE6C9;--text:#F4F2FF;--muted:#8E88B8;--line:#26264A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
+  header{
+    position:sticky;top:0;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.1rem 5%;background:rgba(10,10,24,.85);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{display:flex;align-items:center;gap:.55rem;font-weight:700;font-size:1.1rem;}
+  .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px 2px var(--cyan);}
+  .back-link{color:var(--muted);text-decoration:none;font-size:.88rem;}
+  .back-link:hover{color:var(--text);}
+
+  main{max-width:760px;margin:0 auto;padding:4rem 5% 6rem;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--cyan);
+  }
+  main h1{font-size:clamp(2rem,5vw,2.8rem);margin-top:.8rem;letter-spacing:-.01em;}
+  main > p.lead{color:var(--muted);margin-top:1rem;font-size:1.05rem;line-height:1.6;max-width:58ch;}
+
+  .note{
+    margin-top:2rem;padding:1.1rem 1.3rem;border-radius:14px;
+    background:var(--panel);border:1px solid var(--line);
+    font-size:.9rem;color:var(--muted);line-height:1.6;
+  }
+  .note b{color:var(--text);}
+
+  .steps{margin-top:3rem;display:flex;flex-direction:column;gap:1.2rem;}
+  .step{
+    display:flex;gap:1.2rem;
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:1.6rem;
+  }
+  .step-num{
+    flex-shrink:0;width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(140deg, var(--violet), var(--cyan));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.95rem;color:#0A0A18;
+  }
+  .step h3{font-size:1.05rem;margin-bottom:.5rem;}
+  .step p{color:var(--muted);font-size:.9rem;line-height:1.6;}
+  .step a{color:var(--cyan);text-decoration:none;}
+  .step a:hover{text-decoration:underline;}
+
+  .options{
+    margin-top:3rem;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:1rem;
+  }
+  .opt{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:14px;
+    padding:1.3rem;
+  }
+  .opt h4{font-size:.98rem;margin-bottom:.4rem;}
+  .opt p{color:var(--muted);font-size:.85rem;line-height:1.5;}
+  .opt a{
+    display:inline-block;margin-top:.8rem;color:var(--cyan);
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;text-decoration:none;
+  }
+  .opt a:hover{text-decoration:underline;}
+
+  footer{
+    padding:2.5rem 5%;text-align:center;color:var(--muted);font-size:.85rem;
+    border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="logo-dot"></span> THANU AI</div>
+  <a href="index.html" class="back-link">← Back to home</a>
+</header>
+
+<main>
+  <span class="eyebrow">Deploy Guide</span>
+  <h1>Put your project online, for free</h1>
+  <p class="lead">THANU AI doesn't run its own hosting service — instead, here's a real, working path to get your site live using the same free platforms professionals use.</p>
+
+  <div class="note">
+    <b>Why not "one-click deploy from THANU AI"?</b> A real hosting service costs money to run (servers, bandwidth, storage) and comes with real responsibility for what gets uploaded to it. Rather than promise something that isn't actually built, this guide points you straight to platforms that already do it well — for free.
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>Pick a platform</h3>
+        <p>For a static site like this one, <a href="https://www.netlify.com" target="_blank" rel="noopener">Netlify</a> or <a href="https://vercel.com" target="_blank" rel="noopener">Vercel</a> are the easiest — both have generous free tiers and no credit card required to start.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>Sign up</h3>
+        <p>Create an account with your email or GitHub. If you're under 18, check the platform's terms — some require a parent/guardian for account creation.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>Upload your project</h3>
+        <p>Drag and drop your <code>public</code> folder (the one with <code>index.html</code>) straight into the Netlify/Vercel dashboard. No command line needed for a basic static deploy.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h3>Go live</h3>
+        <p>You'll get a free <code>yourproject.netlify.app</code> or <code>yourproject.vercel.app</code> link instantly. You can connect a custom domain later if you buy one.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div>
+        <h3>Need the AI chat working too?</h3>
+        <p>Since <code>app.html</code> calls a server (<code>index.js</code>) for real AI replies, a static host like Netlify won't run that part. Use <a href="https://render.com" target="_blank" rel="noopener">Render</a> or <a href="https://railway.app" target="_blank" rel="noopener">Railway</a> instead — both can run the full Node project and let you set your <code>GEMINI_API_KEY</code> or <code>ANTHROPIC_API_KEY</code> safely as an environment variable.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="options">
+    <div class="opt">
+      <h4>Static only</h4>
+      <p>Just the homepage, no working AI chat. Fastest, simplest.</p>
+      <a href="https://www.netlify.com" target="_blank" rel="noopener">netlify.com →</a>
+    </div>
+    <div class="opt">
+      <h4>Full app (with AI chat)</h4>
+      <p>Runs index.js so the chat page actually talks to the AI.</p>
+      <a href="https://render.com" target="_blank" rel="noopener">render.com →</a>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 THANU AI — built for people, not tabs.</footer>
+
+</body>
+</html>

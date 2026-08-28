@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THANU AI — One Mind, Every Task</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A18;
+    --panel:#13132A;
+    --panel-2:#191938;
+    --violet:#7C6CF0;
+    --cyan:#2FE6C9;
+    --text:#F4F2FF;
+    --muted:#8E88B8;
+    --line:#26264A;
+  }
+  html.light{
+    --bg:#F6F5FB;
+    --panel:#FFFFFF;
+    --panel-2:#F0EEF9;
+    --violet:#6C5CE7;
+    --cyan:#0FBFA6;
+    --text:#16162E;
+    --muted:#65618A;
+    --line:#E1DEF2;
+  }
+  body{transition:background .3s ease, color .3s ease;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--violet);color:#fff;}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--cyan);
+    outline-offset:3px;
+  }
+
+  h1,h2,h3,.mono{font-family:'Space Grotesk',sans-serif;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--cyan);
+  }
+
+  /* ---------- background pulse field ---------- */
+  #pulse-canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    opacity:.55;
+  }
+
+  header{
+    position:sticky;top:0;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.1rem 5%;
+    background:rgba(10,10,24,.55);
+    backdrop-filter:blur(20px) saturate(140%);
+    -webkit-backdrop-filter:blur(20px) saturate(140%);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    transition:background .3s, border-color .3s;
+  }
+  header.scrolled{
+    background:rgba(10,10,24,.82);
+    border-bottom-color:var(--line);
+  }
+  .logo{
+    display:flex;align-items:center;gap:.55rem;
+    font-weight:700;font-size:1.15rem;letter-spacing:.02em;
+  }
+  .logo-dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 12px 2px var(--cyan);
+    animation:blink 2.4s ease-in-out infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.35;}}
+  nav{display:flex;gap:2rem;}
+  nav a{
+    color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;
+    transition:color .2s;
+  }
+  nav a:hover{color:var(--text);}
+  .cta-small{
+    padding:.55rem 1.2rem;border-radius:999px;
+    background:var(--text);color:var(--bg);
+    font-weight:600;font-size:.85rem;text-decoration:none;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .cta-small:hover{transform:translateY(-2px);box-shadow:0 8px 24px -8px var(--cyan);}
+
+  section{position:relative;z-index:1;padding:6.5rem 5%;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:92vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding-top:4rem;
+    position:relative;
+  }
+  .hero::before{
+    content:'';position:absolute;
+    top:-10%;left:50%;transform:translateX(-50%);
+    width:900px;height:600px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(124,108,240,.28), transparent 55%),
+      radial-gradient(circle at 70% 60%, rgba(47,230,201,.16), transparent 55%);
+    filter:blur(40px);
+    pointer-events:none;
+    z-index:-1;
+  }
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.4rem .9rem;border:1px solid var(--line);border-radius:999px;
+    width:fit-content;margin-bottom:2rem;
+    color:var(--muted);font-size:.8rem;
+    background:var(--panel);
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 7vw, 5.6rem);
+    font-weight:700;
+    line-height:1.02;
+    letter-spacing:-.02em;
+    max-width:16ch;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(100deg, var(--violet), var(--cyan));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p{
+    margin-top:1.8rem;
+    max-width:46ch;
+    font-size:1.15rem;
+    color:var(--muted);
+    line-height:1.6;
+  }
+  .hero-actions{
+    display:flex;gap:1rem;margin-top:2.6rem;flex-wrap:wrap;
+  }
+  .btn-primary{
+    padding:.95rem 1.8rem;border-radius:12px;
+    background:linear-gradient(100deg, var(--violet), #5C4CD8);
+    color:#fff;font-weight:600;text-decoration:none;
+    border:none;font-size:.95rem;cursor:pointer;
+    transition:transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
+    display:inline-flex;align-items:center;gap:.5rem;
+    position:relative;overflow:hidden;
+  }
+  .btn-primary::after{
+    content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+    transform:skewX(-20deg);transition:left .6s ease;
+  }
+  .btn-primary:hover::after{left:130%;}
+  .btn-primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 38px -12px var(--violet);}
+  .btn-ghost{
+    padding:.95rem 1.8rem;border-radius:12px;
+    background:transparent;border:1px solid var(--line);
+    color:var(--text);font-weight:600;text-decoration:none;font-size:.95rem;
+    transition:border-color .2s, background .2s, transform .2s;
+  }
+  .btn-ghost:hover{border-color:var(--cyan);background:rgba(47,230,201,.06);transform:translateY(-2px);}
+
+  /* live demo strip */
+  .console{
+    margin-top:4rem;
+    max-width:640px;
+    background:rgba(19,19,42,.55);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 30px 60px -30px rgba(0,0,0,.6);
+    animation:rise .9s cubic-bezier(.2,.8,.2,1) .3s both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+  .console-bar{
+    display:flex;align-items:center;gap:.4rem;
+    padding:.7rem 1rem;border-bottom:1px solid var(--line);
+    background:var(--panel-2);
+  }
+  .console-bar span{width:9px;height:9px;border-radius:50%;background:#3a3a5c;}
+  .console-body{
+    padding:1.1rem 1.3rem;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.85rem;
+    color:var(--cyan);
+    min-height:64px;
+  }
+  .console-body .prompt{color:var(--muted);}
+  #type-out::after{
+    content:'▍';animation:blink 1s step-start infinite;
+  }
+
+  /* ---------- MARQUEE ---------- */
+  .marquee-wrap{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:1.4rem 0;overflow:hidden;background:var(--panel);
+  }
+  .marquee{
+    display:flex;gap:3.5rem;white-space:nowrap;
+    animation:scroll 26s linear infinite;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    color:var(--muted);font-size:1rem;
+  }
+  .marquee span{opacity:.85;}
+  .marquee span b{color:var(--text);}
+  @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  /* ---------- CAPABILITIES GRID ---------- */
+  .section-head{max-width:640px;margin-bottom:3.5rem;}
+  .section-head h2{
+    font-size:clamp(2rem, 4vw, 2.8rem);
+    margin-top:.8rem;letter-spacing:-.01em;
+  }
+  .section-head p{color:var(--muted);margin-top:1rem;font-size:1.05rem;line-height:1.6;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:1.2rem;
+  }
+  .card{
+    background:linear-gradient(160deg, rgba(25,25,56,.7), rgba(19,19,42,.5));
+    backdrop-filter:blur(16px);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:1.8rem;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s;
+    position:relative;
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(24px);
+  }
+  .card.in-view{opacity:1;transform:translateY(0);}
+  .card::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(340px circle at var(--mx,50%) var(--my,0%), rgba(124,108,240,.14), transparent 60%);
+    opacity:0;transition:opacity .3s;pointer-events:none;
+  }
+  .card:hover::before{opacity:1;}
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(124,108,240,.55);
+    box-shadow:0 20px 46px -20px rgba(124,108,240,.45), 0 0 0 1px rgba(47,230,201,.08) inset;
+  }
+  .card-icon{
+    width:42px;height:42px;border-radius:11px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(140deg, rgba(124,108,240,.25), rgba(47,230,201,.15));
+    font-size:1.3rem;margin-bottom:1.1rem;
+  }
+  .card h3{font-size:1.15rem;font-weight:600;margin-bottom:.55rem;}
+  .card p{color:var(--muted);font-size:.92rem;line-height:1.55;}
+  .card .tag{
+    margin-top:1.1rem;display:inline-block;
+    font-family:'JetBrains Mono',monospace;font-size:.7rem;
+    color:var(--cyan);letter-spacing:.05em;
+  }
+
+  /* ---------- PROCESS ---------- */
+  .flow{
+    display:flex;flex-wrap:wrap;gap:0;
+    border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    background:var(--panel);
+  }
+  .flow-step{
+    flex:1;min-width:220px;
+    padding:2.2rem 1.8rem;
+    border-right:1px solid var(--line);
+    position:relative;
+    opacity:0;transform:translateY(20px);
+    transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .flow-step.in-view{opacity:1;transform:translateY(0);}
+  .flow-step:hover{background:rgba(124,108,240,.05);}
+  .flow-step:last-child{border-right:none;}
+  .flow-num{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--muted);font-size:.8rem;margin-bottom:1rem;display:block;
+  }
+  .flow-step h3{font-size:1.05rem;margin-bottom:.5rem;font-weight:600;}
+  .flow-step p{color:var(--muted);font-size:.88rem;line-height:1.55;}
+  code{
+    font-family:'JetBrains Mono',monospace;
+    background:var(--panel-2);
+    padding:.15rem .4rem;border-radius:5px;
+    font-size:.85em;color:var(--cyan);
+  }
+
+  /* ---------- STATS ---------- */
+  .stats{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:1.5rem;
+  }
+  .stat{
+    opacity:0;transform:translateY(20px);
+    transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .stat.in-view{opacity:1;transform:translateY(0);}
+  .stat h4{
+    font-size:clamp(2.2rem,4vw,3.2rem);
+    background:linear-gradient(100deg, var(--cyan), var(--violet));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    font-weight:700;
+  }
+  .stat p{color:var(--muted);margin-top:.4rem;font-size:.9rem;}
+
+  /* ---------- CTA ---------- */
+  .final-cta{
+    text-align:center;
+    background:radial-gradient(ellipse at center, rgba(124,108,240,.18), transparent 70%);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .final-cta h2{
+    font-size:clamp(2.2rem,5vw,3.6rem);
+    max-width:16ch;margin:0 auto;line-height:1.08;
+  }
+  .final-cta p{color:var(--muted);margin:1.3rem auto 2.4rem;max-width:44ch;}
+
+  footer{
+    padding:3rem 5%;
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:1rem;
+    color:var(--muted);font-size:.85rem;
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width:640px){
+    .flow-step{border-right:none;border-bottom:1px solid var(--line);}
+    header{flex-wrap:wrap;gap:1rem;}
+    nav{display:none;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="pulse-canvas"></canvas>
+
+<header>
+  <div class="logo"><span class="logo-dot"></span> THANU AI</div>
+  <nav>
+    <a href="#capabilities">Capabilities</a>
+    <a href="#process">How it works</a>
+    <a href="#stats">Numbers</a>
+    <a href="deploy.html">Deploy</a>
+  </nav>
+  <div style="display:flex;align-items:center;gap:.9rem;">
+    <button id="theme-toggle" aria-label="Toggle dark/light mode" style="background:var(--panel);border:1px solid var(--line);border-radius:999px;width:38px;height:38px;cursor:pointer;color:var(--text);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:border-color .2s;">🌙</button>
+    <a href="login.html" class="cta-small">Try it free</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">● Live — one assistant, every task</div>
+  <h1>One mind.<br><span class="grad">Every task</span> you<br>throw at it.</h1>
+  <p>THANU AI writes, designs, codes, and talks back — in Sinhala or English. Built for students, side-hustlers, and anyone tired of switching between five different apps.</p>
+  <div class="hero-actions">
+    <a href="login.html" class="btn-primary">Start free →</a>
+    <a href="#capabilities" class="btn-ghost">See what it does</a>
+  </div>
+
+  <div class="console" id="try">
+    <div class="console-bar"><span></span><span></span><span></span></div>
+    <div class="console-body">
+      <span class="prompt">you&nbsp;›&nbsp;</span><span id="type-out"></span>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee" id="marquee"></div>
+</div>
+
+<section id="capabilities">
+  <div class="section-head">
+    <span class="eyebrow">Capabilities</span>
+    <h2>Eight ways THANU AI earns its keep</h2>
+    <p>Each mode is tuned for a different kind of work — pick one, or let THANU chain them together on its own.</p>
+  </div>
+  <div class="grid" id="cards"></div>
+</section>
+
+<section id="process">
+  <div class="section-head">
+    <span class="eyebrow">Process</span>
+    <h2>From idea to output, in three moves</h2>
+  </div>
+  <div class="flow">
+    <div class="flow-step">
+      <span class="flow-num">01 / ASK</span>
+      <h3>Say what you need</h3>
+      <p>Type it plainly — Sinhala, English, or both mixed. No special commands to memorize.</p>
+    </div>
+    <div class="flow-step">
+      <span class="flow-num">02 / THINK</span>
+      <h3>THANU plans the steps</h3>
+      <p>It breaks the task down, picks the right mode — writing, image, code — and works through it.</p>
+    </div>
+    <div class="flow-step">
+      <span class="flow-num">03 / DELIVER</span>
+      <h3>Get a finished result</h3>
+      <p>Copy it, download it, or ask for a revision. No half-finished drafts left on your hands.</p>
+    </div>
+  </div>
+</section>
+
+<section id="stats">
+  <div class="stats">
+    <div class="stat"><h4>2.4s</h4><p>Average response time</p></div>
+    <div class="stat"><h4>6</h4><p>Specialized modes in one place</p></div>
+    <div class="stat"><h4>24/7</h4><p>Always on, no queue</p></div>
+    <div class="stat"><h4>Si / En</h4><p>Native in both languages</p></div>
+  </div>
+</section>
+
+<section id="deploy">
+  <div class="section-head">
+    <span class="eyebrow">Deploy</span>
+    <h2>Put your project online — free</h2>
+    <p>THANU AI doesn't host sites itself, but here's exactly how to launch anything you build on real, free hosting.</p>
+  </div>
+  <div class="flow">
+    <div class="flow-step">
+      <span class="flow-num">01 / PICK A HOST</span>
+      <h3>Netlify or Vercel</h3>
+      <p>Both have solid free tiers. Netlify is simplest for plain HTML/CSS/JS sites like this one.</p>
+    </div>
+    <div class="flow-step">
+      <span class="flow-num">02 / UPLOAD</span>
+      <h3>Drag & drop your folder</h3>
+      <p>On Netlify: sign in, go to "Add new site" → "Deploy manually", then drag in your project's <code>public</code> folder.</p>
+    </div>
+    <div class="flow-step">
+      <span class="flow-num">03 / GO LIVE</span>
+      <h3>Get your free link</h3>
+      <p>You'll get a link like <code>yourname.netlify.app</code> instantly. Share it with anyone.</p>
+    </div>
+  </div>
+  <p style="color:var(--muted); margin-top:1.5rem; font-size:.9rem;">
+    Need a server too (for the AI chat backend)? Try <b style="color:var(--text)">Render.com</b> — connect your GitHub repo, add your <code>ANTHROPIC_API_KEY</code> or <code>GEMINI_API_KEY</code> as an environment variable, and it deploys <code>index.js</code> automatically.
+  </p>
+</section>
+
+<section class="final-cta">
+  <h2>Stop switching tabs. Start with THANU.</h2>
+  <p>One box to type into. Every task you need done, handled from the same place.</p>
+  <a href="login.html" class="btn-primary">Try THANU AI free →</a>
+</section>
+
+<footer>
+  <div class="logo"><span class="logo-dot"></span> THANU AI</div>
+  <div>© 2026 THANU AI — built for people, not tabs.</div>
+  <div style="font-size:.82rem;color:var(--muted);">Need help? Contact the owner — 📞 +94 74 103 3159 · ✉️ thanujadilsahh2011@gmail.com</div>
+</footer>
+
+<script>
+  // ---------- typing demo ----------
+  const prompts = [
+    "generate an essay about climate change...",
+    "සිංහලෙන් කවියක් ලියලා දෙනවද?",
+    "write clean Python code for a to-do app...",
+    "design a logo idea for my youtube channel..."
+  ];
+  const el = document.getElementById('type-out');
+  let pI = 0, cI = 0, deleting = false;
+  function typeLoop(){
+    const current = prompts[pI];
+    if(!deleting){
+      el.textContent = current.slice(0, cI+1);
+      cI++;
+      if(cI === current.length){ deleting = true; setTimeout(typeLoop, 1400); return; }
+    } else {
+      el.textContent = current.slice(0, cI-1);
+      cI--;
+      if(cI === 0){ deleting = false; pI = (pI+1) % prompts.length; }
+    }
+    setTimeout(typeLoop, deleting ? 28 : 45);
+  }
+  typeLoop();
+
+  // ---------- marquee content ----------
+  const words = ["Writing","Coding","Image ideas","Sinhala translation","Study help","Business plans","Video scripts","Data cleanup"];
+  const mq = document.getElementById('marquee');
+  mq.innerHTML = [...words, ...words].map(w => `<span><b>✦</b> ${w}</span>`).join('');
+
+  // ---------- capability cards ----------
+  const caps = [
+    {icon:"💬", tag:"CHAT", title:"AI Chat", desc:"Ask anything — questions, ideas, explanations — and get clear answers back."},
+    {icon:"💻", tag:"CODE", title:"Code Help", desc:"Write, debug, and understand code across common languages."},
+    {icon:"🎵", tag:"LYRICS", title:"Song Lyrics", desc:"Draft lyrics, hooks, and structure ideas for your next track."},
+    {icon:"📰", tag:"NEWS", title:"News Summaries", desc:"Quick summaries of what's happening, in plain language."},
+    {icon:"✍️", tag:"WRITE", title:"Writing & Essays", desc:"Essays, captions, emails, ad copy — drafted in seconds, in the tone you ask for."},
+    {icon:"🌐", tag:"LANGUAGE", title:"Sinhala ⇄ English", desc:"Chat and translate naturally in Sinhala or English."},
+    {icon:"📊", tag:"BUSINESS", title:"Plans & Pitches", desc:"Business plans, pricing ideas, and pitch decks structured from a rough idea."},
+    {icon:"🎓", tag:"STUDY", title:"Study Help", desc:"Explains topics simply, builds practice questions, checks your answers."},
+  ];
+  document.getElementById('cards').innerHTML = caps.map(c => `
+    <div class="card">
+      <div class="card-icon">${c.icon}</div>
+      <h3>${c.title}</h3>
+      <p>${c.desc}</p>
+      <span class="tag">${c.tag}</span>
+    </div>
+  `).join('');
+
+  // ---------- background neural pulse ----------
+  const canvas = document.getElementById('pulse-canvas');
+  const ctx = canvas.getContext('2d');
+  let w,h,nodes=[];
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const N = reduceMotion ? 0 : 46;
+  for(let i=0;i<N;i++){
+    nodes.push({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25,
+      r: Math.random()*1.6+0.6
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(const n of nodes){
+      n.x += n.vx; n.y += n.vy;
+      if(n.x<0||n.x>w) n.vx*=-1;
+      if(n.y<0||n.y>h) n.vy*=-1;
+    }
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const a=nodes[i], b=nodes[j];
+        const d = Math.hypot(a.x-b.x, a.y-b.y);
+        if(d<140){
+          ctx.strokeStyle = `rgba(124,108,240,${(1-d/140)*0.18})`;
+          ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+      }
+    }
+    for(const n of nodes){
+      ctx.fillStyle = 'rgba(47,230,201,0.5)';
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
+    }
+    if(!reduceMotion) requestAnimationFrame(draw);
+  }
+  draw();
+
+  // ---------- header background on scroll ----------
+  const headerEl = document.querySelector('header');
+  window.addEventListener('scroll', () => {
+    headerEl.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // ---------- scroll reveal for cards & sections ----------
+  const revealTargets = document.querySelectorAll('.card, .flow-step, .stat');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in-view');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealTargets.forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 6) * 60}ms`;
+    io.observe(el);
+  });
+
+  // ---------- cursor-follow glow on cards ----------
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+      card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    });
+  });
+
+  // ---------- theme toggle ----------
+  const themeBtn = document.getElementById('theme-toggle');
+  const applyTheme = (mode) => {
+    document.documentElement.classList.toggle('light', mode === 'light');
+    themeBtn.textContent = mode === 'light' ? '☀️' : '🌙';
+    localStorage.setItem('thanu-theme', mode);
+  };
+  applyTheme(localStorage.getItem('thanu-theme') || 'dark');
+  themeBtn.addEventListener('click', () => {
+    const next = document.documentElement.classList.contains('light') ? 'dark' : 'light';
+    applyTheme(next);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THANU AI — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A18;--panel:#13132A;--panel-2:#191938;
+    --violet:#7C6CF0;--cyan:#2FE6C9;--text:#F4F2FF;--muted:#8E88B8;--line:#26264A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;position:relative;overflow-x:hidden;
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+  h1{font-family:'Space Grotesk',sans-serif;}
+
+  #bg-canvas{position:fixed;inset:0;z-index:-1;opacity:.5;}
+
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.1rem 5%;
+  }
+  .logo{display:flex;align-items:center;gap:.55rem;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;}
+  .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px 2px var(--cyan);}
+  .back-link{color:var(--muted);text-decoration:none;font-size:.88rem;}
+  .back-link:hover{color:var(--text);}
+
+  main{
+    flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 5%;
+  }
+
+  .auth-card{
+    width:100%;max-width:400px;
+    background:rgba(19,19,42,.6);
+    backdrop-filter:blur(20px) saturate(140%);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:2.2rem;
+    box-shadow:0 30px 60px -30px rgba(0,0,0,.6);
+    animation:rise .7s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+  .auth-card h1{font-size:1.6rem;margin-bottom:.4rem;}
+  .auth-card p.sub{color:var(--muted);font-size:.88rem;margin-bottom:1.6rem;}
+
+  .tabs{display:flex;gap:.4rem;background:var(--panel-2);border-radius:10px;padding:.3rem;margin-bottom:1.6rem;}
+  .tab{
+    flex:1;text-align:center;padding:.55rem;border-radius:8px;
+    font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;
+    transition:background .2s, color .2s;
+  }
+  .tab.active{background:linear-gradient(100deg, var(--violet), #5C4CD8);color:#fff;}
+
+  .field{margin-bottom:1.1rem;}
+  .field label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:.4rem;}
+  .field input{
+    width:100%;padding:.75rem .9rem;border-radius:10px;
+    background:var(--panel-2);border:1px solid var(--line);
+    color:var(--text);font-size:.9rem;font-family:'Inter',sans-serif;
+    transition:border-color .2s;
+  }
+  .field input:focus{border-color:var(--violet);outline:none;}
+
+  .submit-btn{
+    width:100%;padding:.85rem;border-radius:10px;border:none;
+    background:linear-gradient(100deg, var(--violet), #5C4CD8);
+    color:#fff;font-weight:600;font-size:.92rem;cursor:pointer;margin-top:.4rem;
+    transition:transform .2s, box-shadow .2s;
+    position:relative;overflow:hidden;
+  }
+  .submit-btn::after{
+    content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+    transform:skewX(-20deg);transition:left .6s ease;
+  }
+  .submit-btn:hover::after{left:130%;}
+  .submit-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -12px var(--violet);}
+
+  .divider{display:flex;align-items:center;gap:.8rem;margin:1.4rem 0;color:var(--muted);font-size:.75rem;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line);}
+
+  .oauth-btn{
+    width:100%;padding:.75rem;border-radius:10px;
+    background:var(--panel-2);border:1px solid var(--line);
+    color:var(--text);font-size:.85rem;font-weight:500;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:.6rem;
+    transition:border-color .2s, background .2s;
+  }
+  .oauth-btn:hover{border-color:var(--cyan);background:var(--panel);}
+
+  .note{
+    margin-top:1.4rem;text-align:center;color:var(--muted);font-size:.78rem;line-height:1.6;
+  }
+
+  .demo-tag{
+    display:inline-flex;align-items:center;gap:.4rem;
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;
+    color:var(--cyan);background:rgba(47,230,201,.08);
+    border:1px solid rgba(47,230,201,.25);
+    padding:.3rem .7rem;border-radius:999px;margin-bottom:1.2rem;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<header>
+  <div class="logo"><span class="logo-dot"></span> THANU AI</div>
+  <a href="index.html" class="back-link">← Back to home</a>
+</header>
+
+<main>
+  <div class="auth-card">
+    <div class="tabs">
+      <div class="tab active" data-tab="login">Log in</div>
+      <div class="tab" data-tab="signup">Sign up</div>
+    </div>
+
+    <div id="form-area">
+      <h1 id="form-title">Welcome back</h1>
+      <p class="sub" id="form-sub">Log in to continue to THANU AI.</p>
+
+      <p id="error-msg" style="display:none;color:#ff8080;font-size:.82rem;margin-bottom:1rem;background:rgba(255,92,115,.08);border:1px solid rgba(255,92,115,.25);padding:.6rem .8rem;border-radius:8px;"></p>
+
+      <form id="auth-form">
+        <div class="field" id="name-field" style="display:none;">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required minlength="6">
+        </div>
+        <button type="submit" class="submit-btn" id="submit-btn">Log in</button>
+      </form>
+
+      <div class="divider">or continue with</div>
+      <button class="oauth-btn" id="google-btn">🔎 Continue with Google</button>
+    </div>
+
+    <p class="note">Your account is created with Firebase Authentication. THANU AI doesn't see or store your password — Google handles that securely.</p>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    GoogleAuthProvider,
+    updateProfile,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { firebaseConfig } from "./firebase-config.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // If already logged in, skip straight to the workspace
+  onAuthStateChanged(auth, (user) => {
+    if (user) window.location.href = "app.html";
+  });
+
+  const tabs = document.querySelectorAll('.tab');
+  const nameField = document.getElementById('name-field');
+  const nameInput = document.getElementById('name');
+  const formTitle = document.getElementById('form-title');
+  const formSub = document.getElementById('form-sub');
+  const submitBtn = document.getElementById('submit-btn');
+  const errorMsg = document.getElementById('error-msg');
+  let mode = 'login';
+
+  function showError(msg){
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+  function clearError(){ errorMsg.style.display = 'none'; }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      mode = tab.dataset.tab;
+      clearError();
+      if(mode === 'signup'){
+        nameField.style.display = 'block';
+        formTitle.textContent = 'Create your account';
+        formSub.textContent = 'Sign up to start using THANU AI.';
+        submitBtn.textContent = 'Sign up';
+        document.getElementById('password').setAttribute('autocomplete','new-password');
+      } else {
+        nameField.style.display = 'none';
+        formTitle.textContent = 'Welcome back';
+        formSub.textContent = 'Log in to continue to THANU AI.';
+        submitBtn.textContent = 'Log in';
+        document.getElementById('password').setAttribute('autocomplete','current-password');
+      }
+    });
+  });
+
+  function friendlyError(err){
+    const code = err.code || '';
+    if(code.includes('email-already-in-use')) return 'That email already has an account — try logging in instead.';
+    if(code.includes('invalid-email')) return 'That email address doesn\'t look right.';
+    if(code.includes('weak-password')) return 'Password should be at least 6 characters.';
+    if(code.includes('user-not-found') || code.includes('wrong-password') || code.includes('invalid-credential')) return 'Incorrect email or password.';
+    if(code.includes('api-key')) return 'Firebase isn\'t configured yet — add your project keys to firebase-config.js.';
+    return err.message || 'Something went wrong. Try again.';
+  }
+
+  document.getElementById('auth-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+    submitBtn.disabled = true;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    try {
+      if(mode === 'signup'){
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        if(nameInput.value.trim()){
+          await updateProfile(cred.user, { displayName: nameInput.value.trim() });
+        }
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+      window.location.href = 'app.html';
+    } catch (err) {
+      showError(friendlyError(err));
+      submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('google-btn').addEventListener('click', async () => {
+    clearError();
+    try {
+      await signInWithPopup(auth, googleProvider);
+      window.location.href = 'app.html';
+    } catch (err) {
+      showError(friendlyError(err));
+    }
+  });
+</script>
+
+<script>
+  // subtle animated background, matching homepage — kept as a plain (non-module) script
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let w,h,nodes=[];
+  function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const N = reduceMotion ? 0 : 30;
+  for(let i=0;i<N;i++){
+    nodes.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,r:Math.random()*1.4+.6});
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(const n of nodes){
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>w) n.vx*=-1;
+      if(n.y<0||n.y>h) n.vy*=-1;
+    }
+    for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<130){ ctx.strokeStyle=`rgba(124,108,240,${(1-d/130)*.15})`; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+    }
+    for(const n of nodes){ ctx.fillStyle='rgba(47,230,201,0.45)'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,7); ctx.fill(); }
+    if(!reduceMotion) requestAnimationFrame(draw);
+  }
+  draw();
+</script>
+
+</body>
+</html>

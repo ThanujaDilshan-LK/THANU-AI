@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THANU AI — Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A18;--panel:#13132A;--panel-2:#191938;
+    --violet:#7C6CF0;--cyan:#2FE6C9;--text:#F4F2FF;--muted:#8E88B8;--line:#26264A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;
+  }
+  a:focus-visible, button:focus-visible, textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.1rem 5%;border-bottom:1px solid var(--line);
+    background:rgba(10,10,24,.75);backdrop-filter:blur(14px);
+    position:sticky;top:0;z-index:20;
+  }
+  .logo{display:flex;align-items:center;gap:.55rem;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;}
+  .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px 2px var(--cyan);}
+  .back-link{color:var(--muted);text-decoration:none;font-size:.88rem;}
+  .back-link:hover{color:var(--text);}
+
+  main{flex:1;max-width:820px;width:100%;margin:0 auto;padding:2rem 5% 1rem;}
+
+  .welcome{margin-bottom:1.6rem;}
+  .welcome h1{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:.3rem;}
+  .welcome p{color:var(--muted);font-size:.9rem;}
+
+  .tool-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:.8rem;margin-bottom:1.8rem;
+  }
+  .tool{
+    background:rgba(19,19,42,.6);
+    backdrop-filter:blur(14px);
+    border:1px solid var(--line);
+    border-radius:14px;padding:1.1rem .9rem;
+    text-align:center;cursor:pointer;
+    transition:transform .2s, border-color .2s, background .2s;
+  }
+  .tool:hover{transform:translateY(-3px);border-color:var(--violet);background:rgba(124,108,240,.08);}
+  .tool.active{border-color:var(--cyan);background:rgba(47,230,201,.08);}
+  .tool .emoji{font-size:1.5rem;display:block;margin-bottom:.4rem;}
+  .tool .label{font-size:.8rem;font-weight:600;}
+  .tool .sub{font-size:.68rem;color:var(--muted);margin-top:.15rem;}
+
+  .chat-window{
+    background:rgba(19,19,42,.5);
+    backdrop-filter:blur(14px);
+    border:1px solid var(--line);
+    border-radius:16px;padding:1.4rem;overflow-y:auto;
+    display:flex;flex-direction:column;gap:1rem;min-height:280px;max-height:48vh;
+  }
+  .msg{max-width:82%;padding:.8rem 1rem;border-radius:12px;font-size:.92rem;line-height:1.55;}
+  .msg.bot{background:var(--panel-2);align-self:flex-start;border:1px solid var(--line);}
+  .msg.user{background:linear-gradient(100deg, var(--violet), #5C4CD8);color:#fff;align-self:flex-end;}
+  .msg .label{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--cyan);margin-bottom:.35rem;}
+  .msg.user .label{color:rgba(255,255,255,.75);}
+  .msg .file-chip{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:rgba(255,255,255,.08);border-radius:8px;
+    padding:.35rem .6rem;font-size:.78rem;margin-top:.5rem;
+  }
+
+  .composer-wrap{margin-top:1rem;}
+  .attach-preview{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;}
+  .attach-chip{
+    display:flex;align-items:center;gap:.4rem;
+    background:var(--panel-2);border:1px solid var(--line);
+    border-radius:8px;padding:.3rem .6rem;font-size:.78rem;color:var(--muted);
+  }
+  .attach-chip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;}
+
+  .composer{
+    display:flex;align-items:flex-end;gap:.5rem;
+    background:rgba(19,19,42,.65);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;padding:.6rem;
+    box-shadow:0 20px 40px -24px rgba(0,0,0,.6);
+  }
+  .icon-btn{
+    flex-shrink:0;width:38px;height:38px;border-radius:10px;
+    background:transparent;border:none;color:var(--muted);
+    font-size:1.05rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:background .2s, color .2s;
+  }
+  .icon-btn:hover{background:var(--panel-2);color:var(--text);}
+  .icon-btn.recording{color:#ff5c73;animation:pulse-rec 1s infinite;}
+  @keyframes pulse-rec{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+  .composer textarea{
+    flex:1;resize:none;background:transparent;border:none;color:var(--text);
+    font-family:'Inter',sans-serif;font-size:.95rem;padding:.6rem .5rem;outline:none;
+    max-height:120px;
+  }
+  .send-btn{
+    flex-shrink:0;
+    background:linear-gradient(100deg, var(--violet), #5C4CD8);
+    color:#fff;border:none;border-radius:10px;padding:0 1.2rem;height:38px;
+    font-weight:600;cursor:pointer;font-size:.88rem;
+    transition:transform .15s;
+  }
+  .send-btn:hover{transform:translateY(-2px);}
+  .send-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+  .disclaimer{text-align:center;color:var(--muted);font-size:.76rem;margin-top:.9rem;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="logo-dot"></span> THANU AI</div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <span id="user-email" style="font-size:.82rem;color:var(--muted);"></span>
+    <button id="logout-btn" style="background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:.4rem .9rem;border-radius:8px;font-size:.8rem;cursor:pointer;">Log out</button>
+  </div>
+</header>
+
+<main>
+  <div class="welcome">
+    <h1 id="welcome-heading">Welcome to THANU AI 👋</h1>
+    <p>Pick a mode below, or just start typing.</p>
+  </div>
+
+  <div class="tool-grid" id="tools"></div>
+
+  <div class="chat-window" id="chat">
+    <div class="msg bot"><span class="label">THANU</span>Mode එකක් select කරලා, mokakhari type කරලා try කරන්න.</div>
+  </div>
+
+  <div class="composer-wrap">
+    <div class="attach-preview" id="attach-preview"></div>
+    <div class="composer">
+      <button class="icon-btn" id="attach-btn" title="Attach a file" aria-label="Attach a file">📎</button>
+      <button class="icon-btn" id="mic-btn" title="Voice message" aria-label="Record a voice message">🎙️</button>
+      <textarea id="input" rows="1" placeholder="Type something..."></textarea>
+      <button class="send-btn" id="send">Send</button>
+    </div>
+    <input type="file" id="file-input" style="display:none;" multiple>
+    <p class="disclaimer">Powered by an AI API — needs a valid key set on the server to give real replies.</p>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { firebaseConfig } from "./firebase-config.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+    document.getElementById('user-email').textContent = user.displayName || user.email;
+    document.getElementById('welcome-heading').textContent = `Welcome, ${user.displayName || user.email.split('@')[0]} 👋`;
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+</script>
+
+<script>
+  const tools = [
+    {icon:"✍️", label:"Write", sub:"essays & text"},
+    {icon:"💻", label:"Code", sub:"build & run"},
+    {icon:"🖼️", label:"Image", sub:"visual ideas"},
+    {icon:"🎬", label:"Video", sub:"storyboard"},
+    {icon:"🎵", label:"Song", sub:"lyrics & mood"},
+    {icon:"🎞️", label:"Movie", sub:"script outline"},
+  ];
+  const toolGrid = document.getElementById('tools');
+  toolGrid.innerHTML = tools.map((t,i) => `
+    <div class="tool ${i===0?'active':''}" data-mode="${t.label}">
+      <span class="emoji">${t.icon}</span>
+      <span class="label">${t.label}</span>
+      <span class="sub">${t.sub}</span>
+    </div>
+  `).join('');
+  toolGrid.querySelectorAll('.tool').forEach(tool => {
+    tool.addEventListener('click', () => {
+      toolGrid.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+      tool.classList.add('active');
+    });
+  });
+
+  const chat = document.getElementById('chat');
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
+  const fileInput = document.getElementById('file-input');
+  const attachBtn = document.getElementById('attach-btn');
+  const attachPreview = document.getElementById('attach-preview');
+  const micBtn = document.getElementById('mic-btn');
+  let attachedFiles = [];
+  let recording = false;
+
+  function addMsg(text, who, fileNames = []){
+    const div = document.createElement('div');
+    div.className = `msg ${who}`;
+    let filesHtml = fileNames.map(n => `<span class="file-chip">📎 ${n}</span>`).join('');
+    div.innerHTML = `<span class="label">${who === 'user' ? 'You' : 'THANU'}</span>${text}${filesHtml ? '<br>' + filesHtml : ''}`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  attachBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    attachedFiles = [...attachedFiles, ...Array.from(fileInput.files)];
+    renderAttachPreview();
+  });
+  function renderAttachPreview(){
+    attachPreview.innerHTML = attachedFiles.map((f,i) => `
+      <div class="attach-chip">📎 ${f.name} <button data-i="${i}">✕</button></div>
+    `).join('');
+    attachPreview.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        attachedFiles.splice(+b.dataset.i, 1);
+        renderAttachPreview();
+      });
+    });
+  }
+
+  micBtn.addEventListener('click', () => {
+    recording = !recording;
+    micBtn.classList.toggle('recording', recording);
+    micBtn.title = recording ? 'Recording... click to stop' : 'Voice message';
+    if(!recording){
+      attachedFiles.push({ name: 'voice-message.webm' });
+      renderAttachPreview();
+    }
+  });
+
+  function handleSend(){
+    const text = input.value.trim();
+    if(!text && attachedFiles.length === 0) return;
+    const activeMode = toolGrid.querySelector('.tool.active')?.dataset.mode || "Write";
+    const fileNames = attachedFiles.map(f => f.name);
+    addMsg(text || '(attachment only)', 'user', fileNames);
+    input.value = '';
+    attachedFiles = [];
+    renderAttachPreview();
+    sendBtn.disabled = true;
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, mode: activeMode })
+    })
+      .then(res => res.json())
+      .then(data => {
+        addMsg(data.error ? `⚠️ ${data.error}` : data.reply, 'bot');
+      })
+      .catch(() => addMsg("⚠️ Couldn't reach the server. Is it running?", 'bot'))
+      .finally(() => { sendBtn.disabled = false; });
+  }
+
+  sendBtn.addEventListener('click', handleSend);
+  input.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); handleSend(); }
+  });
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+</script>
+
+</body>
+</html>
