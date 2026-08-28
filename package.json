@@ -1,0 +1,12 @@
+{
+  "name": "thanu-ai",
+  "version": "1.0.0",
+  "description": "THANU AI — landing page showcasing AI capabilities",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
